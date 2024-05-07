@@ -122,7 +122,7 @@ def update_stocks(stocks: list, client_id, seller_token):
 
 
 def download_stock():
-    """Скачать файл ostatki с сайта casio
+    """Скачать файл ostatki с сайта casio.
 
     Расширенное описание функции.
     1. Скачивает архив оставшихся товаров с сайта.
@@ -159,12 +159,12 @@ def create_stocks(watch_remnants, offer_ids):
     Расширенное описание функции.
 
     Args:
-        watch_remnants(dict): словарь оставшихся часов
+        watch_remnants(dict): словарь оставшихся часов.
         offer_ids(list): список артикулов товаров.
 
     Returns:
-        list[dict]: вернется список словарей содержащий код товара и его количество, с ключами
-                    "offer_id", "stock".
+        list[dict]: вернется список словарей содержащий код товара
+        и его количество, с ключами "offer_id", "stock".
 
     """
     # Уберем то, что не загружено в seller
@@ -192,12 +192,13 @@ def create_prices(watch_remnants, offer_ids):
     Расширенное описание функции.
 
     Args:
-        watch_remnants(dict): словарь оставшихся часов
+        watch_remnants(dict): словарь оставшихся часов.
         offer_ids(list[dict]): список артикулов товаров.
 
     Returns:
-        list[dict]: вернется список словарей с ценами на имеющиеся часы, содержащих ключи "auto_action_enabled",
-                    "currency_code", "offer_id", "old_price", "price".
+        list[dict]: вернется список словарей с ценами на имеющиеся часы,
+        содержащих ключи "auto_action_enabled", "currency_code",
+        "offer_id", "old_price", "price".
 
     """
     prices = []
@@ -249,10 +250,25 @@ def divide(lst: list, n: int):
 
     """
     for i in range(0, len(lst), n):
-        yield lst[i : i + n]
+        yield lst[i: i + n]
 
 
 async def upload_prices(watch_remnants, client_id, seller_token):
+    """Обновляет цены.
+
+    Расширенное описание функции.
+
+    Args:
+        watch_remnants(dict): словарь оставшихся часов.
+        client_id(str): айди клиента.
+        seller_token(str): токен продавца.
+
+    Returns:
+        list[dict]: вернется список словарей с ценами на имеющиеся часы,
+        содержащих ключи "auto_action_enabled", "currency_code",
+        "offer_id", "old_price", "price".
+
+    """
     offer_ids = get_offer_ids(client_id, seller_token)
     prices = create_prices(watch_remnants, offer_ids)
     for some_price in list(divide(prices, 1000)):
@@ -261,6 +277,21 @@ async def upload_prices(watch_remnants, client_id, seller_token):
 
 
 async def upload_stocks(watch_remnants, client_id, seller_token):
+    """Обновляет оставшиеся товары.
+
+    Расширенное описание функции.
+
+    Args:
+        watch_remnants(dict): словарь оставшихся часов.
+        client_id(str): айди клиента.
+        seller_token(str): токен продавца.
+
+    Returns:
+        list: вернется список не пустых товаров.
+        list[dict]: вернется список словарей содержащий код товара
+        и его количество, с ключами "offer_id", "stock".
+
+    """
     offer_ids = get_offer_ids(client_id, seller_token)
     stocks = create_stocks(watch_remnants, offer_ids)
     for some_stock in list(divide(stocks, 100)):
@@ -270,6 +301,7 @@ async def upload_stocks(watch_remnants, client_id, seller_token):
 
 
 def main():
+    """Основная функция для обновления цен и остатков товаров."""
     env = Env()
     seller_token = env.str("SELLER_TOKEN")
     client_id = env.str("CLIENT_ID")
